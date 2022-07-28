@@ -16,6 +16,14 @@ namespace RuTubeApi.ConsoleTest
                 if (ruTubeVideo != null)
                 {
                     Console.WriteLine(ruTubeVideo);
+                    if (ruTubeVideo.ChannelOwned != null)
+                    {
+                        Console.WriteLine($"Channel info:\n{ruTubeVideo.ChannelOwned}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Channel info: NULL");
+                    }
                 }
                 else
                 {

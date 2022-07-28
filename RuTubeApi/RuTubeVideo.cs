@@ -15,10 +15,11 @@ namespace RuTubeApi
         public string ThumbnailUrl { get; private set; }
         public List<RuTubeVideoFormat> Formats { get; private set; }
         public Stream ImageData { get; private set; }
+        public RuTubeChannel ChannelOwned { get; private set; }
 
         public RuTubeVideo(string title, string id, string description,
             TimeSpan duration, DateTime dateUploaded, DateTime datePublished,
-            string thumbnailUrl, List<RuTubeVideoFormat> videoFormats, Stream imageData)
+            string thumbnailUrl, List<RuTubeVideoFormat> videoFormats, Stream imageData, RuTubeChannel channelOwned)
         {
             Title = title;
             Id = id;
@@ -29,6 +30,7 @@ namespace RuTubeApi
             ThumbnailUrl = thumbnailUrl;
             Formats = videoFormats;
             ImageData = imageData;
+            ChannelOwned = channelOwned;
         }
 
         public void Dispose()

@@ -114,6 +114,43 @@ namespace RuTubeApi
                 CultureInfo.CurrentCulture);
         }
 
+        internal static RuTubeChannelInfoResult GetChannelInfo(string channelId)
+        {
+            string url = GetChannelInfoRequestUrl(channelId);
+            FileDownloader d = new FileDownloader();
+            d.Url = url;
+            int errorCode = d.DownloadString(out string response);
+            JObject jInfo = errorCode == 200 ? JObject.Parse(response) : null;
+            return new RuTubeChannelInfoResult(jInfo, errorCode);
+        }
+
+        internal static RuTubeChannel GetRuTubeChannelInfo(string channelId)
+        {
+            RuTubeChannelInfoResult channelInfoResult = GetChannelInfo(channelId);
+            return ParseRuTubeChannelInfo(channelInfoResult);
+        }
+
+        public static RuTubeChannel ParseRuTubeChannelInfo(RuTubeChannelInfoResult channelInfo)
+        {
+            if (channelInfo == null || channelInfo.ChannelInfo == null || channelInfo.ErrorCode != 200)
+            {
+                return null;
+            }
+            string channelId = channelInfo.ChannelInfo.Value<string>("id");
+            string channelName = channelInfo.ChannelInfo.Value<string>("name");
+            string channelDescription = channelInfo.ChannelInfo.Value<string>("description");
+            bool isOfficial = channelInfo.ChannelInfo.Value<bool>("is_official");
+            uint videoCount = channelInfo.ChannelInfo.Value<uint>("video_count");
+            ulong viewCount = channelInfo.ChannelInfo.Value<ulong>("hits");
+            uint subscriberCount = channelInfo.ChannelInfo.Value<uint>("subscribers_count");
+            string avatarImageUrl = channelInfo.ChannelInfo.Value<string>("avatar_url");
+            Stream imageData = GetImageData(avatarImageUrl);
+            DateTime dateCreated = channelInfo.ChannelInfo.Value<DateTime>("date_joined");
+
+            return new RuTubeChannel(channelName, channelId, channelDescription, isOfficial,
+                videoCount, viewCount, subscriberCount, avatarImageUrl, imageData, dateCreated);
+        }
+
         public static RuTubeVideo ParseRuTubeVideoInfo(
             RuTubeVideoInfoResult videoInfo, RuTubeWebPage videoWebPage)
         {
@@ -144,8 +181,11 @@ namespace RuTubeApi
 
             MemoryStream imageData = GetImageData(thumbnailUrl);
 
+            string channelId = videoInfo.VideoInfo.Value<JObject>("author").Value<string>("id");
+            RuTubeChannel channelOuned = GetRuTubeChannelInfo(channelId);
+
             return new RuTubeVideo(videoTitle, videoId, videoDescription, duration,
-                uploadDate, publishedDate, thumbnailUrl, videoFormats, imageData);
+                uploadDate, publishedDate, thumbnailUrl, videoFormats, imageData, channelOuned);
         }
 
         private static MemoryStream GetImageData(string imageUrl)
@@ -192,6 +232,12 @@ namespace RuTubeApi
         public static string GetVideoInfoRequestUrl(string videoId)
         {
             string url = $"{RUTUBE_ENDPOINT_PLAY_OPTIONS_URL}/{videoId}";
+            return url;
+        }
+
+        public static string GetChannelInfoRequestUrl(string channelId)
+        {
+            string url = $"{RUTUBE_ENDPOINT_PROFILE_USER_URL}/{channelId}";
             return url;
         }
 
