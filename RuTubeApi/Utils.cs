@@ -43,15 +43,18 @@ namespace RuTubeApi
 
         internal static string ExtractInfoFromWebPage(string webPage)
         {
-            string subString = "window.reduxState = {";
-            int n = webPage.IndexOf(subString);
-            if (n >= 0)
+            if (!string.IsNullOrEmpty(webPage) && !string.IsNullOrWhiteSpace(webPage))
             {
-                string t = webPage.Substring(n + subString.Length - 1);
-                n = t.IndexOf("};\n");
-                if (n > 0)
+                string subString = "window.reduxState = {";
+                int n = webPage.IndexOf(subString);
+                if (n >= 0)
                 {
-                    return t.Substring(0, n + 1);
+                    string t = webPage.Substring(n + subString.Length - 1);
+                    n = t.IndexOf("};\n");
+                    if (n > 0)
+                    {
+                        return t.Substring(0, n + 1);
+                    }
                 }
             }
             return null;
@@ -59,22 +62,28 @@ namespace RuTubeApi
 
         internal static DateTime ExtractUploadDateFromWebPage(string webPage)
         {
-            string subString = "\"uploadDate\" : \"";
-            string t = ExtractValue(webPage, subString);
-            if (!string.IsNullOrEmpty(t))
+            if (!string.IsNullOrEmpty(webPage) && !string.IsNullOrWhiteSpace(webPage))
             {
-                return StringToDateTime(t);
+                string subString = "\"uploadDate\" : \"";
+                string t = ExtractValue(webPage, subString);
+                if (!string.IsNullOrEmpty(t))
+                {
+                    return StringToDateTime(t);
+                }
             }
             return DateTime.MaxValue;
         }
 
         internal static DateTime ExtractPublishedDateFromWebPage(string webPage)
         {
-            string subString = "\"datePublished\": \"";
-            string t = ExtractValue(webPage, subString);
-            if (!string.IsNullOrEmpty(t))
+            if (!string.IsNullOrEmpty(webPage) && !string.IsNullOrWhiteSpace(webPage))
             {
-                return StringToDateTime(t);
+                string subString = "\"datePublished\": \"";
+                string t = ExtractValue(webPage, subString);
+                if (!string.IsNullOrEmpty(t))
+                {
+                    return StringToDateTime(t);
+                }
             }
             return DateTime.MaxValue;
         }
@@ -97,21 +106,31 @@ namespace RuTubeApi
 
         private static string ExtractValue(string text, string paramId)
         {
-            int n = text.IndexOf(paramId);
-            if (n >= 0)
+            if (!string.IsNullOrEmpty(text) && !string.IsNullOrWhiteSpace(text) &&
+                !string.IsNullOrEmpty(paramId) && !string.IsNullOrWhiteSpace(paramId))
             {
-                string t = text.Substring(n + paramId.Length);
-                string s = t.Substring(0, 19);
-                return s;
+                int n = text.IndexOf(paramId);
+                if (n >= 0)
+                {
+                    string t = text.Substring(n + paramId.Length);
+                    int magicNumber = 19;
+                    string s = t.Substring(0, magicNumber);
+                    return s;
+                }
             }
-
             return null;
         }
 
         internal static DateTime StringToDateTime(string t)
         {
-            return DateTime.ParseExact(t, "yyyy-MM-ddTHH:mm:ss",
-                CultureInfo.CurrentCulture);
+            if (DateTime.TryParseExact(t, "yyyy-MM-ddTHH:mm:ss",
+                CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime result))
+            {
+                return result;
+            }
+
+            System.Diagnostics.Debug.WriteLine("DateTime parsing failed!");
+            return DateTime.MaxValue;
         }
 
         internal static RuTubeChannelInfoResult GetChannelInfo(string channelId)
@@ -154,7 +173,7 @@ namespace RuTubeApi
         public static RuTubeVideo ParseRuTubeVideoInfo(
             RuTubeVideoInfoResult videoInfo, RuTubeWebPage videoWebPage)
         {
-            if (videoInfo == null || videoInfo.ErrorCode != 200)
+            if (videoInfo == null || videoInfo.VideoInfo == null || videoInfo.ErrorCode != 200)
             {
                 return null;
             }
@@ -169,8 +188,10 @@ namespace RuTubeApi
             string thumbnailUrl = videoInfo.VideoInfo.Value<string>("thumbnail_url");
             int dur = int.Parse(videoInfo.VideoInfo.Value<string>("duration"));
             TimeSpan duration = TimeSpan.FromMilliseconds(dur);
-            DateTime uploadDate = ExtractUploadDateFromWebPage(videoWebPage.VideoWebPage);
-            DateTime publishedDate = ExtractPublishedDateFromWebPage(videoWebPage.VideoWebPage);
+            DateTime uploadDate = videoWebPage == null || videoWebPage.ErrorCode != 200 ? DateTime.MaxValue :
+                ExtractUploadDateFromWebPage(videoWebPage.VideoWebPage);
+            DateTime publishedDate = videoWebPage == null || videoWebPage.ErrorCode != 200 ? DateTime.MaxValue :
+                ExtractPublishedDateFromWebPage(videoWebPage.VideoWebPage);
 
             string playlistManifestUrl = videoInfo.VideoInfo.Value<JObject>("video_balancer").Value<string>("m3u8");
             List<RuTubeVideoFormat> videoFormats = null;
@@ -190,16 +211,24 @@ namespace RuTubeApi
 
         private static MemoryStream GetImageData(string imageUrl)
         {
-            MemoryStream stream = new MemoryStream();
-            FileDownloader d = new FileDownloader();
-            d.Url = imageUrl;
-            int errorCode = d.Download(stream);
-            if (errorCode != 200)
+            try
             {
-                stream.Dispose();
-                stream = null;
+                MemoryStream stream = new MemoryStream();
+                FileDownloader d = new FileDownloader();
+                d.Url = imageUrl;
+                int errorCode = d.Download(stream);
+                if (errorCode != 200)
+                {
+                    stream.Dispose();
+                    stream = null;
+                }
+                return stream;
             }
-            return stream;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return null;
+            }
         }
 
         private static int GetPlaylistManifest(string manifestUrl, out string response)
