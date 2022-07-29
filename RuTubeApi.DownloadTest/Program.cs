@@ -26,7 +26,8 @@ namespace RuTubeApi.DownloadTest
                     {
                         RuTubeVideoFormat format = video.Formats[video.Formats.Count - 1];
                         UrlList chunks = format.ChunkUrls;
-                        Console.WriteLine($"Selected format: {format}");
+                        string fmt = $"{format.GetShortInfo()}, {format.Codecs}, {chunks.Count} chunks total";
+                        Console.WriteLine($"Selected format: {fmt}");
                         for (int i = 0; i < chunks.Count; ++i)
                         {
                             string url = chunks.Urls[i];
@@ -37,7 +38,7 @@ namespace RuTubeApi.DownloadTest
                                 int errorCode = d.Download(mem);
                                 if (errorCode != 200)
                                 {
-                                    Console.WriteLine("Download failed!");
+                                    Console.WriteLine($"Download failed with code {errorCode}!");
                                     break;
                                 }
                                 mem.Position = 0;

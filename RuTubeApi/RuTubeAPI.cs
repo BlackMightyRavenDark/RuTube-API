@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using Multi_threaded_downloader;
+using static RuTubeApi.Utils;
 
 namespace RuTubeApi
 {
@@ -14,21 +15,21 @@ namespace RuTubeApi
             RuTubeVideoInfoResult infoApi = GetVideoInfoFromApi(videoId);
             if (infoApi.ErrorCode == 200)
             {
-                RuTubeWebPage ruTubeWebPage = Utils.GetVideoWebPage(videoId);
-                return Utils.ParseRuTubeVideoInfo(infoApi, ruTubeWebPage);
+                RuTubeWebPage ruTubeWebPage = GetVideoWebPage(videoId);
+                return ParseRuTubeVideoInfo(infoApi, ruTubeWebPage);
             }
             return null;
         }
 
         public RuTubeChannel GetRuTubeChannel(string channelId)
         {
-            return Utils.GetRuTubeChannelInfo(channelId);
+            return GetRuTubeChannelInfo(channelId);
         }
 
         public RuTubeVideoInfoResult GetVideoInfoFromApi(string videoId)
         {
             FileDownloader d = new FileDownloader();
-            string url = Utils.GetVideoInfoRequestUrl(videoId);
+            string url = GetVideoInfoRequestUrl(videoId);
             d.Url = url;
             int errorCode = d.DownloadString(out string jsonString);
             JObject json = errorCode == 200 ? JObject.Parse(jsonString) : null;

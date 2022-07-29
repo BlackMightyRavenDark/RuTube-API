@@ -18,6 +18,12 @@ namespace RuTubeApi
             ChunkUrls = chunkUrls;
         }
 
+        public string GetShortInfo()
+        {
+            string t = $"{VideoWidth}x{VideoHeight}, ~{Bitrate / 1024} kbps";
+            return t;
+        }
+
         public override string ToString()
         {
             string resolutionString = $"{VideoWidth}x{VideoHeight}";
