@@ -5,7 +5,9 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuTubeApi.ConsoleTest", "RuTubeApi.ConsoleTest\RuTubeApi.ConsoleTest.csproj", "{299531B3-E935-40CB-85E0-FD548E6F09A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuTubeApi", "RuTubeApi\RuTubeApi.csproj", "{473FFEE6-4130-4350-AB6A-126D43ED580F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuTubeApi", "RuTubeApi\RuTubeApi.csproj", "{473FFEE6-4130-4350-AB6A-126D43ED580F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuTubeApi.DownloadTest", "RuTubeApi.DownloadTest\RuTubeApi.DownloadTest.csproj", "{A422007A-4FE9-46D6-B563-84764EA69154}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{473FFEE6-4130-4350-AB6A-126D43ED580F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{473FFEE6-4130-4350-AB6A-126D43ED580F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{473FFEE6-4130-4350-AB6A-126D43ED580F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A422007A-4FE9-46D6-B563-84764EA69154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A422007A-4FE9-46D6-B563-84764EA69154}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A422007A-4FE9-46D6-B563-84764EA69154}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A422007A-4FE9-46D6-B563-84764EA69154}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
