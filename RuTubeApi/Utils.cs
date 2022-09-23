@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
-using Multi_threaded_downloader;
+using MultiThreadedDownloaderLib;
 using static RuTubeApi.RuTubeAPI;
 
 namespace RuTubeApi
@@ -138,6 +138,10 @@ namespace RuTubeApi
             string url = GetChannelInfoRequestUrl(channelId);
             FileDownloader d = new FileDownloader();
             d.Url = url;
+            if (!string.IsNullOrEmpty(UserAgent) && !string.IsNullOrWhiteSpace(UserAgent))
+            {
+                d.Headers.Add("User-Agent", UserAgent);
+            }
             int errorCode = d.DownloadString(out string response);
             JObject jInfo = errorCode == 200 ? JObject.Parse(response) : null;
             return new RuTubeChannelInfoResult(jInfo, errorCode);
@@ -216,6 +220,10 @@ namespace RuTubeApi
                 MemoryStream stream = new MemoryStream();
                 FileDownloader d = new FileDownloader();
                 d.Url = imageUrl;
+                if (!string.IsNullOrEmpty(UserAgent) && !string.IsNullOrWhiteSpace(UserAgent))
+                {
+                    d.Headers.Add("User-Agent", UserAgent);
+                }
                 int errorCode = d.Download(stream);
                 if (errorCode != 200)
                 {
@@ -235,6 +243,10 @@ namespace RuTubeApi
         {
             FileDownloader d = new FileDownloader();
             d.Url = manifestUrl;
+            if (!string.IsNullOrEmpty(UserAgent) && !string.IsNullOrWhiteSpace(UserAgent))
+            {
+                d.Headers.Add("User-Agent", UserAgent);
+            }
             int errorCode = d.DownloadString(out response);
             return errorCode;
         }

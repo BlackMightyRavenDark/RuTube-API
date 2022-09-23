@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Multi_threaded_downloader;
+using MultiThreadedDownloaderLib;
 
 namespace RuTubeApi.DownloadTest
 {
@@ -9,6 +9,7 @@ namespace RuTubeApi.DownloadTest
         static void Main(string[] args)
         {
             string videoId = "cef16f69b228bd7d1019cc6479ca92e2";
+            RuTubeAPI.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101 Firefox/104.0";
             RuTubeAPI api = new RuTubeAPI();
             RuTubeVideo video = api.GetRuTubeVideo(videoId);
             if (video != null)

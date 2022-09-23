@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using Multi_threaded_downloader;
+using MultiThreadedDownloaderLib;
 using static RuTubeApi.Utils;
 
 namespace RuTubeApi
@@ -9,6 +9,8 @@ namespace RuTubeApi
         public const string RUTUBE_BASE_URL = "https://rutube.ru";
         public const string RUTUBE_ENDPOINT_PLAY_OPTIONS_URL = "https://rutube.ru/api/play/options";
         public const string RUTUBE_ENDPOINT_PROFILE_USER_URL = "http://rutube.ru/api/profile/user";
+
+        public static string UserAgent = null;
 
         public RuTubeVideo GetRuTubeVideo(string videoId)
         {
@@ -31,6 +33,10 @@ namespace RuTubeApi
             FileDownloader d = new FileDownloader();
             string url = GetVideoInfoRequestUrl(videoId);
             d.Url = url;
+            if (!string.IsNullOrEmpty(UserAgent) && !string.IsNullOrWhiteSpace(UserAgent))
+            {
+                d.Headers.Add("User-Agent", UserAgent);
+            }
             int errorCode = d.DownloadString(out string jsonString);
             JObject json = errorCode == 200 ? JObject.Parse(jsonString) : null;
             return new RuTubeVideoInfoResult(json, errorCode);

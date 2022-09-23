@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
-using Multi_threaded_downloader;
+using MultiThreadedDownloaderLib;
 
 namespace RuTubeApi
 {

@@ -1,4 +1,4 @@
-﻿using Multi_threaded_downloader;
+﻿using MultiThreadedDownloaderLib;
 
 namespace RuTubeApi
 {
@@ -12,6 +12,10 @@ namespace RuTubeApi
             string url = Utils.GetVideoUrl(videoId);
             FileDownloader d = new FileDownloader();
             d.Url = url;
+            if (!string.IsNullOrEmpty(RuTubeAPI.UserAgent) && !string.IsNullOrWhiteSpace(RuTubeAPI.UserAgent))
+            {
+                d.Headers.Add("User-Agent", RuTubeAPI.UserAgent);
+            }
             ErrorCode = d.DownloadString(out string webPage);
             if (ErrorCode == 200)
             {
