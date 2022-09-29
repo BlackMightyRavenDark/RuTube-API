@@ -8,7 +8,7 @@ namespace RuTubeApi
     {
         public const string RUTUBE_BASE_URL = "https://rutube.ru";
         public const string RUTUBE_ENDPOINT_PLAY_OPTIONS_URL = "https://rutube.ru/api/play/options";
-        public const string RUTUBE_ENDPOINT_PROFILE_USER_URL = "http://rutube.ru/api/profile/user";
+        public const string RUTUBE_ENDPOINT_PROFILE_USER_URL = "https://rutube.ru/api/profile/user";
 
         public static string UserAgent = null;
 
